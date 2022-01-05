@@ -35,6 +35,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     //WidgetsBinding.instance!.addPostFrameCallback((_) => _afterBuild(context));
+    Provider.of<WalletProvider>(context, listen: false).context = context;
+    Provider.of<ChatListProvider>(context, listen: false).context = context;
 
     return Consumer<WalletProvider>(
         builder: (context, walletProvider, child) {

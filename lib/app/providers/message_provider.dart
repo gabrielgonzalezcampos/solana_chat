@@ -34,11 +34,11 @@ class MessageProvider extends ChangeNotifier{
   }
 
   Future<List<ChatMessage>> getAccountMessageHistory(
-    RPCClient connection,
+    SolanaClient connection,
     String pubKeyStr
   ) async {
     //const sentPubkey = new PublicKey(pubKeyStr);
-    Account? sentAccount = await connection.getAccountInfo(pubKeyStr);
+    Account? sentAccount = await connection.rpcClient.getAccountInfo(pubKeyStr, encoding: Encoding.base64);
     // get and deserialize solana account data and receive txid
     // go to arweave and query using these txid
     // parse json and return ChatMessages
@@ -46,13 +46,14 @@ class MessageProvider extends ChangeNotifier{
       throw Exception('Account $pubKeyStr does not exist');
     }
     //TODO deserialize data
-    List<int> dataBuffer = Buffer.fromBase58(sentAccount.data.toString()).toList();
-    ChatMessageSchema chat = ChatMessageSchema.fromBorsh(dataBuffer);
+    BinaryAccountData dataBuffer = sentAccount.data as BinaryAccountData;
+    //List<int> dataBuffer = Buffer.fromBase58(sentAccount.data as BinaryAccountData).toList();
+    ChatMessageSchema chat = ChatMessageSchema.fromBorsh(dataBuffer.data);
     return chat.chatMessageList();
   }
 
   Future<List<ChatMessage>> getMessageSentHistory(
-    RPCClient connection,
+    SolanaClient connection,
     String sentChatPubkeyStr
   ) async {
     List<ChatMessage> messages = await getAccountMessageHistory( connection, sentChatPubkeyStr);
@@ -61,17 +62,17 @@ class MessageProvider extends ChangeNotifier{
   }
 
   Future<List<ChatMessage>> getMessageReceivedHistory(
-      RPCClient connection,
+      SolanaClient connection,
       String walletChatPubkeyStr
       ) async {
     List<ChatMessage> messages = await getAccountMessageHistory( connection, walletChatPubkeyStr);
-    print("getMessageSentHistory ${messages.toString()}");
+    print("getMessageReceivedHistory ${messages.toString()}");
     return messages;
   }
 
 
   Future<String> sendMessage(
-    RPCClient connection,
+    SolanaClient connection,
     Wallet wallet,
     String destPubkeyStr,
     String message
@@ -90,12 +91,11 @@ class MessageProvider extends ChangeNotifier{
     );
     Message messageTransaction = Message(instructions: [messageInstruction]);
 
-    String signature = await connection.signAndSendTransaction(messageTransaction, [wallet.signer]);
-    await connection.waitForSignatureStatus(signature, Commitment.finalized);
-    TransactionResponse? result = await connection.getConfirmedTransaction(signature, commitment: Commitment.finalized);
+    String signature = await connection.rpcClient.signAndSendTransaction(messageTransaction, [wallet]);
+    await connection.waitForSignatureStatus(signature, status: ConfirmationStatus.finalized);
+    TransactionDetails? result = await connection.rpcClient.getTransaction(signature, commitment: Commitment.finalized);
 
-    print("end sendMessage ${result?.transaction.message?.instructions.toString()}");
-    print("${result.toString()}");
+    //print("end sendMessage ${result?.transaction.message?.instructions.toString()}");
     if (result == null) {
       return "OK: Message saved Successfully";
     }

@@ -24,8 +24,12 @@ class WalletProvider extends ChangeNotifier{
   }
 
   Wallet? _wallet;
-  RPCClient? _connection;
+  SolanaClient? _connection;
   BuildContext _context;
+
+  set context(BuildContext value) {
+    _context = value;
+  }
 
   WalletProvider(this._context) {
     print("init wallet provider");
@@ -38,16 +42,16 @@ class WalletProvider extends ChangeNotifier{
     _wallet = value;
   }
 
-  RPCClient? get connection => _connection;
+  SolanaClient? get connection => _connection;
 
-  set connection(RPCClient? value) {
+  set connection(SolanaClient? value) {
     _connection = value;
   }
 
 
 
   void initializeWallet({int size = 300}) async {
-    Tuple2<RPCClient, Wallet> tuple;
+    Tuple2<SolanaClient, Wallet> tuple;
     if (_random){
       tuple = await initWallet();
     } else {
@@ -58,7 +62,7 @@ class WalletProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void _setWalletAndConnection(Wallet w, RPCClient c){
+  void _setWalletAndConnection(Wallet w, SolanaClient c){
     wallet = w;
     connection = c;
     print('Wallet PK: ${wallet!.address}');

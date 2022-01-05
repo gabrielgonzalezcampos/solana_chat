@@ -80,7 +80,7 @@ class _AddPageState extends State<AddPage> {
     } else {
       walletProvider.seed = seed1;
     }
-    walletProvider.initializeWallet(size: Provider.of<MessageProvider>(context, listen: false).chatMessagesSize + 10);
+    walletProvider.initializeWallet(size: Provider.of<MessageProvider>(context, listen: false).chatMessagesSize*10000);
   }
 }
 

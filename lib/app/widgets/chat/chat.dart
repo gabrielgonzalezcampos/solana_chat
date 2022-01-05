@@ -1,7 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:solana_chat/app/models/messge_wrapper.dart';
+import 'package:solana_chat/app/providers/chat_list_provider.dart';
+import 'package:solana_chat/app/providers/message_provider.dart';
+import 'package:solana_chat/app/providers/wallet_provider.dart';
 import 'package:solana_chat/app/widgets/message_list/message_list.dart';
 import 'package:solana_chat/app/widgets/send_message/send_message.dart';
 
@@ -12,6 +16,9 @@ class Chat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    Provider.of<ChatListProvider>(context, listen: false).refreshMessages();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(

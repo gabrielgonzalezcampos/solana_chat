@@ -7,6 +7,6 @@ class WalletProvider extends ChangeNotifier{
 
 }
 /*
-Future<String> getMessage(RPCClient connection, Wallet wallet, String message){
+Future<String> getMessage(SolanaClient connection, Wallet wallet, String message){
 
 }*/

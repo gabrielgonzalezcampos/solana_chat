@@ -16,7 +16,7 @@ void main() {
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => messageProvider),
-        ChangeNotifierProvider(create: (context) => ChatListProvider()),
+        ChangeNotifierProvider(create: (context) => ChatListProvider(context)),
         ChangeNotifierProvider(create: (context) => WalletProvider(context))
       ],
     child: MyApp(title: title),

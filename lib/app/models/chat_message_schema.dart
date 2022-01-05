@@ -27,6 +27,9 @@ class ChatMessageSchema extends BorshStruct{
   List<ChatMessage> chatMessageList() {
     List<ChatMessage> chatMessageList= [];
     for (var element in messages) {
+      if (element == "") {
+        break;
+      }
       chatMessageList.add(ChatMessage.fromBorsh(Buffer.fromBase58(element).toList()));
     }
     return chatMessageList;

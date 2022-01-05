@@ -8,7 +8,7 @@ import 'package:solana_chat/config/config.dart';
 const programID = addMessageProgramID;
 
 Future<String> getChatMessageAccountPubKey(
-    RPCClient connection,
+    SolanaClient connection,
     Wallet wallet,
     int space,
     {bool reset = false}
@@ -17,21 +17,21 @@ Future<String> getChatMessageAccountPubKey(
     //wallet.
   }
   Ed25519HDKeyPair keyPair = await Ed25519HDKeyPair.random();
-  int rent = await connection.getMinimumBalanceForRentExemption(space);
+  int rent = await connection.rpcClient.getMinimumBalanceForRentExemption(space);
 
   Instruction instruction = SystemInstruction.createAccount(
-    address: keyPair.address,
-    owner: wallet.address,
-    rent: rent,
+    fromPubKey:  wallet.address,
+    owner: programID,
+    pubKey: keyPair.address,
+    lamports: rent,
     space: space,
-    programId: programID,
   );
 
   Message message = Message(instructions: [instruction]);
 
-  String signature = await connection.signAndSendTransaction(message, [wallet.signer, keyPair]);
+  String signature = await connection.rpcClient.signAndSendTransaction(message, [wallet, keyPair]);
 
-  await connection.waitForSignatureStatus(signature, Commitment.finalized);
+  await connection.waitForSignatureStatus(signature, status: ConfirmationStatus.finalized);
 
   print("Account: ${keyPair.address}");
   return keyPair.address;

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key, required this.title}) : super(key: key);
 
   late Wallet wallet;
-  late RPCClient connection;
+  late SolanaClient connection;
   final String title;
 
   final bool random = false;

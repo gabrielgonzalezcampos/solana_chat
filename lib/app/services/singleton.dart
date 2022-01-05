@@ -5,7 +5,7 @@ import 'package:solana_chat/app/models/chat_wrapper.dart';
 class Singleton {
   static final Singleton _singleton = Singleton._internal();
   late Wallet _wallet;
-  late RPCClient _connection;
+  late SolanaClient _connection;
   List<ChatWrapper> chatList = [];
 
   factory Singleton() {
@@ -20,9 +20,9 @@ class Singleton {
     _wallet = value;
   }
 
-  RPCClient get connection => _connection;
+  SolanaClient get connection => _connection;
 
-  set connection(RPCClient value) {
+  set connection(SolanaClient value) {
     _connection = value;
   }
 
