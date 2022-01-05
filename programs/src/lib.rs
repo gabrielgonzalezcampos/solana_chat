@@ -19,13 +19,13 @@ pub struct ChatMessage {
 
 const DUMMY_TX_ID: &str = "0000000000000000000000000000000000000000000";
 const DUMMY_CREATED_ON: &str = "0000000000000000"; // milliseconds, 16 digits
-const MESSAGE_NUMBER: int = 20; // milliseconds, 16 digits
+const MESSAGE_NUMBER: i32 = 20; // milliseconds, 16 digits
 pub fn get_init_chat_message() -> ChatMessage {
-    ChatMessage{ archive_id: String::from(DUMMY_TX_ID), created_on: String::from(DUMMY_CREATED_ON) }
+    ChatMessage{ message: String::from(DUMMY_TX_ID), created_on: String::from(DUMMY_CREATED_ON) }
 }
 pub fn get_init_chat_messages() -> Vec<ChatMessage> {
     let mut messages = Vec::new();
-    for _ in 0..20 {
+    for _ in 0..MESSAGE_NUMBER {
         messages.push(get_init_chat_message());
     }
     return messages;
@@ -64,7 +64,7 @@ pub fn process_instruction(
             }
         }
     };
-    let index = existing_data_messages.iter().position(|p| p.archive_id == String::from(DUMMY_TX_ID)).unwrap(); // find first dummy data entry
+    let index = existing_data_messages.iter().position(|p| p.message == String::from(DUMMY_TX_ID)).unwrap(); // find first dummy data entry
     msg!("Found index {}", index);
     existing_data_messages[index] = instruction_data_message; // set dummy data to new entry
     let updated_data = existing_data_messages.try_to_vec().expect("Failed to encode data."); // set messages object back to vector data
