@@ -70,7 +70,7 @@ class MessageProvider extends ChangeNotifier{
   }
 
 
-  Future<TransactionResponse?> sendMessage(
+  Future<String> sendMessage(
     RPCClient connection,
     Wallet wallet,
     String destPubkeyStr,
@@ -91,11 +91,15 @@ class MessageProvider extends ChangeNotifier{
     Message messageTransaction = Message(instructions: [messageInstruction]);
 
     String signature = await connection.signAndSendTransaction(messageTransaction, [wallet.signer]);
-    TransactionResponse? result = await connection.getConfirmedTransaction(signature);
-    //await connection.waitForSignatureStatus(signature, Commitment.finalized);
+    await connection.waitForSignatureStatus(signature, Commitment.finalized);
+    TransactionResponse? result = await connection.getConfirmedTransaction(signature, commitment: Commitment.finalized);
 
     print("end sendMessage ${result?.transaction.message?.instructions.toString()}");
-    return result;
+    print("${result.toString()}");
+    if (result == null) {
+      return "OK: Message saved Successfully";
+    }
+    return result.toString();
   }
 
   String _getMessage(String message){

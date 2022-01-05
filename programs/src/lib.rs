@@ -77,15 +77,13 @@ pub fn process_instruction(
     // 3. This tx id will be saved to the Solana program and be used for querying back to arweave to get actual data.
     let data = &mut &mut account.data.borrow_mut();
     msg!("Attempting save data.");
-    msg!("Account data length: {:?}", data.len());
-    msg!("Updated data length: {:?}", updated_data.len());
     data[..(updated_data.len())].copy_from_slice(&updated_data);
     msg!("Data updated");
     let saved_data = <Vec<ChatMessage>>::try_from_slice(data)?;
     msg!("ChatMessage has been saved to account data. {:?}", saved_data[index]);
     sol_log_compute_units();
 
-    msg!("End program.");
+    msg!("OK: Message saved Successfully");
     Ok(())
 }
 
