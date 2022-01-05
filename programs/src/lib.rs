@@ -21,7 +21,7 @@ const DUMMY_TX_ID: &str = "0000000000000000000000000000000000000000000";
 const DUMMY_CREATED_ON: &str = "0000000000000000"; // milliseconds, 16 digits
 const MESSAGE_NUMBER: i32 = 20; // milliseconds, 16 digits
 pub fn get_init_chat_message() -> ChatMessage {
-    ChatMessage{ message: String::from(DUMMY_TX_ID), created_on: String::from(DUMMY_CREATED_ON) }
+    ChatMessage{ message: String::from(DUMMY_TX_ID), createdOn: String::from(DUMMY_CREATED_ON) }
 }
 pub fn get_init_chat_messages() -> Vec<ChatMessage> {
     let mut messages = Vec::new();
