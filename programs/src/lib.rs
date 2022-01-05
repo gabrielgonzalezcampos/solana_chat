@@ -79,7 +79,8 @@ pub fn process_instruction(
     msg!("Attempting save data.");
     msg!("Account data length: {:?}", data.len());
     msg!("Updated data length: {:?}", updated_data.len());
-    data[..(updated_data.len()-1)].copy_from_slice(&updated_data);
+    data[..(updated_data.len())].copy_from_slice(&updated_data);
+    msg!("Data updated");
     let saved_data = <Vec<ChatMessage>>::try_from_slice(data)?;
     msg!("ChatMessage has been saved to account data. {:?}", saved_data[index]);
     sol_log_compute_units();
