@@ -27,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int index = 0;
   bool _initWallet = false;
   bool _createdWallet = false;
+  bool _createdAccount = false;
 
   //final Singleton singleton = Singleton();
 
@@ -46,6 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
             WidgetsBinding.instance!.addPostFrameCallback((_) => _afterBuild(context));
             _initWallet = true;
             _createdWallet = true;
+          }
+          if(walletProvider.account != "") {
+            _createdAccount = true;
           }
 
           if (child != null) {

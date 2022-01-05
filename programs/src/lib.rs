@@ -12,13 +12,14 @@ use std::io::ErrorKind::InvalidData;
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct ChatMessage {
-    pub archive_id: String,
-    pub created_on: String
+    pub message: String,
+    pub createdOn: String
 }
 
 
 const DUMMY_TX_ID: &str = "0000000000000000000000000000000000000000000";
 const DUMMY_CREATED_ON: &str = "0000000000000000"; // milliseconds, 16 digits
+const MESSAGE_NUMBER: int = 20; // milliseconds, 16 digits
 pub fn get_init_chat_message() -> ChatMessage {
     ChatMessage{ archive_id: String::from(DUMMY_TX_ID), created_on: String::from(DUMMY_CREATED_ON) }
 }
@@ -76,7 +77,10 @@ pub fn process_instruction(
     // 3. This tx id will be saved to the Solana program and be used for querying back to arweave to get actual data.
     let data = &mut &mut account.data.borrow_mut();
     msg!("Attempting save data.");
-    data[..updated_data.len()].copy_from_slice(&updated_data);    
+    msg!("Account data length: {:?}", data.len());
+    msg!("Updated data length: {:?}", updated_data.len());
+    msg!("Updated data slice: {:?}", updated_data);
+    data[..updated_data.len()].copy_from_slice(&updated_data);
     let saved_data = <Vec<ChatMessage>>::try_from_slice(data)?;
     msg!("ChatMessage has been saved to account data. {:?}", saved_data[index]);
     sol_log_compute_units();

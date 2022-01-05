@@ -3,6 +3,7 @@ import 'package:solana/solana.dart';
 import 'package:solana_chat/app/pages/home_page/home_page.dart';
 import 'package:solana_chat/app/services/singleton.dart';
 import 'package:solana_chat/app/widgets/sidebar/navbar.dart';
+import 'package:solana_chat/config/config.dart';
 
 import 'helpers/common.dart';
 import 'helpers/wallet.dart';
@@ -17,8 +18,7 @@ class MyApp extends StatelessWidget {
   final bool random = false;
   Singleton singleton = Singleton();
 
-  final List<int> seed = [25329, 53596, 44472, 42839, 11091, 41866, 18078, 47681, 2545, 28638, 3474, 60464, 14461, 48272, 38968, 38224, 33849, 17078, 4765, 29883, 14977, 46468, 14029, 23655, 19495];
-  //8bNjUHdtJXHYsabG7cfQbHKJDb9VPpccXYLUW3pbR7Td
+  final List<int> seed = seed1;//8bNjUHdtJXHYsabG7cfQbHKJDb9VPpccXYLUW3pbR7Td
 
   // This widget is the root of your application.
   @override

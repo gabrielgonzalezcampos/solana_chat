@@ -76,7 +76,7 @@ class NavBar extends StatelessWidget {
     }
     return UserInfo(
         address: walletProvider.wallet!.address,
-        mail: 'chat@solana.com',
+        mail: walletProvider.account,
         image: 'http://images.hdqwalls.com/wallpapers/flutter-logo-4k-qn.jpg'
     );
   }

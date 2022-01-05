@@ -5,7 +5,7 @@ import 'package:tuple/tuple.dart';
 
 const SEED_LENGTH = 25;
 
-String cluster = "https://api.devnet.solana.com";
+String cluster = "https://api.devnet.solana.com";//"http://solana.test.node";//"http://127.0.0.1";//:8899";//"https://api.devnet.solana.com";
 final connection = RPCClient(cluster);
 late Wallet wallet;
 late Account account;
@@ -18,20 +18,20 @@ Future<Tuple2<RPCClient,Wallet>> initWallet() async{
   Ed25519HDKeyPair keyPair = await Ed25519HDKeyPair.random();
   wallet = Wallet(signer: keyPair, rpcClient: connection);
 
-  String transactionSignature = await wallet.requestAirdrop(lamports: await connection.getMinimumBalanceForRentExemption(30));
+  String transactionSignature = await wallet.requestAirdrop(lamports: await connection.getMinimumBalanceForRentExemption(300));
   TransactionResponse? confirmedTransaction = await connection.getConfirmedTransaction(transactionSignature);
-  //print("Wallet created");
+  print("Wallet created");
   
   return Tuple2(connection, wallet);
 }
 
-Future<Tuple2<RPCClient,Wallet>> initWalletFromSeed(List<int> seed) async{
+Future<Tuple2<RPCClient,Wallet>> initWalletFromSeed(List<int> seed, {int size = 300}) async{
   // print("Creating wallet...");
 
   Ed25519HDKeyPair keyPair = await Ed25519HDKeyPair.fromSeedWithHdPath(seed: seed, hdPath: "m/44'/501'/0'/0'");
   wallet = Wallet(signer: keyPair, rpcClient: connection);
 
-  String transactionSignature = await wallet.requestAirdrop(lamports: await connection.getMinimumBalanceForRentExemption(30));
+  String transactionSignature = await wallet.requestAirdrop(lamports: await connection.getMinimumBalanceForRentExemption(size));
   TransactionResponse? confirmedTransaction = await connection.getConfirmedTransaction(transactionSignature);
   // print("Wallet created");
 
@@ -62,6 +62,7 @@ List<int> randomSeed(){
   for(int i = 0; i < SEED_LENGTH; i++){
     seed.add(rng.nextInt(pow(2,16).toInt()));
   }
-  //print(seed.toString());
+  print("SEED:");
+  print(seed.toString());
   return seed;
 }

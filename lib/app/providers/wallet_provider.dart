@@ -2,22 +2,34 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:solana/solana.dart';
 import 'package:solana_chat/app/helpers/wallet.dart';
+import 'package:solana_chat/app/providers/message_provider.dart';
+import 'package:solana_chat/app/services/solana/accounts.dart';
+import 'package:solana_chat/config/config.dart';
 import 'package:tuple/tuple.dart';
 
 class WalletProvider extends ChangeNotifier{
 
-  final _random = false;
-  final List<int> _seed = [25329, 53596, 44472, 42839, 11091, 41866, 18078, 47681, 2545, 28638, 3474, 60464, 14461, 48272, 38968, 38224, 33849, 17078, 4765, 29883, 14977, 46468, 14029, 23655, 19495];
+  bool _random = false;
+  final programID = addMessageProgramID;
+  List<int> _seed = seed1;
+  String account = "";
+
+  get random => _random;
+
+  set random(value) {
+    _random = value;
+  }
 
   Wallet? _wallet;
   RPCClient? _connection;
+  BuildContext _context;
 
-  WalletProvider() {
+  WalletProvider(this._context) {
     print("init wallet provider");
-    _initializeWallet();
-    notifyListeners();
+    initializeWallet();
   }
 
   Wallet? get wallet => _wallet;
@@ -34,14 +46,16 @@ class WalletProvider extends ChangeNotifier{
 
 
 
-  void _initializeWallet() async {
+  void initializeWallet({int size = 300}) async {
     Tuple2<RPCClient, Wallet> tuple;
     if (_random){
       tuple = await initWallet();
     } else {
-      tuple = await initWalletFromSeed(_seed);
+      tuple = await initWalletFromSeed(_seed, size: size);
     }
     _setWalletAndConnection(tuple.item2, tuple.item1);
+    _setAccount();
+    notifyListeners();
   }
 
   void _setWalletAndConnection(Wallet w, RPCClient c){
@@ -51,5 +65,14 @@ class WalletProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void _setAccount() async {
+    int size = Provider.of<MessageProvider>(_context, listen: false).chatMessagesSize;
+    account = await getChatMessageAccountPubKey(_connection!, _wallet!, size);
+  }
 
+  List<int> get seed => _seed;
+
+  set seed(List<int> value) {
+    _seed = value;
+  }
 }

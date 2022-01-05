@@ -56,8 +56,8 @@ class _SendMessageState extends State<SendMessage> {
     if (_controller.text != ''){
       //TODO send message
 
-      MessageWrapper newMessage = MessageWrapper(Random().nextBool(), _controller.text);
-      Provider.of<ChatListProvider>(context, listen: false).addMessage(newMessage, widget.chatPubK);
+      MessageWrapper newMessage = MessageWrapper(true, _controller.text);
+      Provider.of<ChatListProvider>(context, listen: false).addMessage(context, newMessage);
       _controller.clear();
     }
   }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solana_chat/app/helpers/common.dart';
+import 'package:solana_chat/app/helpers/wallet.dart';
 import 'package:solana_chat/app/models/chat_wrapper.dart';
 import 'package:solana_chat/app/providers/chat_list_provider.dart';
+import 'package:solana_chat/app/providers/message_provider.dart';
+import 'package:solana_chat/app/providers/wallet_provider.dart';
 import 'package:solana_chat/app/services/singleton.dart';
+import 'package:solana_chat/config/config.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({Key? key}) : super(key: key);
@@ -16,6 +20,7 @@ class _AddPageState extends State<AddPage> {
 
   late TextEditingController _controller;
   Singleton _singleton = Singleton();
+  bool toggleState = false;
 
   @override
   void initState() {
@@ -37,9 +42,19 @@ class _AddPageState extends State<AddPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Text("Change wallet"),
+              Switch(
+                value: toggleState,
+                onChanged: (bool value) {
+                  _changeWallet(value);
+                  setState(() => {
+                    toggleState = value
+                  });
+                },
+              ),
               TextField(
                 controller: _controller,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Enter PubK to send messages'
                 ),
@@ -56,6 +71,16 @@ class _AddPageState extends State<AddPage> {
       Provider.of<ChatListProvider>(context, listen: false).add(ChatWrapper(_controller.text));
       showToast(context, "Chat added");
     }
+  }
+
+  void _changeWallet(bool selector){
+    WalletProvider walletProvider = Provider.of<WalletProvider>(context, listen: false);
+    if (selector) {
+      walletProvider.seed = seed2;
+    } else {
+      walletProvider.seed = seed1;
+    }
+    walletProvider.initializeWallet(size: Provider.of<MessageProvider>(context, listen: false).chatMessagesSize + 10);
   }
 }
 

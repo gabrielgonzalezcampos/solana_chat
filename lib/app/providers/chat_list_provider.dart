@@ -2,8 +2,12 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:solana/solana.dart';
 import 'package:solana_chat/app/models/chat_wrapper.dart';
 import 'package:solana_chat/app/models/messge_wrapper.dart';
+import 'package:solana_chat/app/providers/message_provider.dart';
+import 'package:solana_chat/app/providers/wallet_provider.dart';
 
 class ChatListProvider extends ChangeNotifier {
 
@@ -27,10 +31,25 @@ class ChatListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addMessage(MessageWrapper message, String foreingAddress){
-    ChatWrapper chat = _chatMap.putIfAbsent(foreingAddress, () => ChatWrapper(foreingAddress));
+  void addMessage(BuildContext context, MessageWrapper message/*, String foreingAddress*/){
+    ChatWrapper chat = _chatMap.putIfAbsent(_selectedChat, () => ChatWrapper(_selectedChat));
     chat.messages.add(message);
+    sendMessage(context, message.message);
     notifyListeners();
+  }
+
+  void sendMessage(BuildContext context, String message){
+    WalletProvider walletProvider = Provider.of<WalletProvider>(context, listen: false);
+
+    if (walletProvider.wallet != null && walletProvider.connection != null){
+      Wallet wallet = walletProvider.wallet!;
+      RPCClient connection = walletProvider.connection!;
+      Provider.of<MessageProvider>(context, listen: false).sendMessage(
+          connection,
+          wallet,
+          _selectedChat,
+          message);
+    }
   }
 
   void setSelectedChat(String selectedChatPubK){
