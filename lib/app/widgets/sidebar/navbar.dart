@@ -63,6 +63,9 @@ class NavBar extends StatelessWidget {
 
   _setSelectedChat(String chatPubK, BuildContext context){
     Provider.of<ChatListProvider>(context, listen: false).setSelectedChat(chatPubK);
+    if (chatPubK != "") {
+      Provider.of<ChatListProvider>(context, listen: false).refreshMessages();
+    }
     Navigator.pop(context);
   }
 

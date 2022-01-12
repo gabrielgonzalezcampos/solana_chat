@@ -17,7 +17,7 @@ class Chat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Provider.of<ChatListProvider>(context, listen: false).refreshMessages();
+
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

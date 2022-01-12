@@ -4,6 +4,7 @@ import 'package:borsh/borsh.dart';
 import 'package:solana/solana.dart';
 import 'package:solana_chat/app/models/chat_message.dart';
 import 'package:solana_chat/app/providers/message_provider.dart';
+import 'package:solana_chat/config/config.dart';
 
 part 'chat_message_schema.g.dart';
 
@@ -21,17 +22,21 @@ class ChatMessageSchema extends BorshStruct{
   @override
   List<int> toBorsh() => _ChatMessageSchemaToBorsh(this);
 
-  @Array.fixed(Borsh.string, length: MessageProvider.chatMessageElementsCount)
+  @Array.dynamic(Borsh.string/*, length: MessageProvider.chatMessageElementsCount*/)
   final List<String> messages;
 
   List<ChatMessage> chatMessageList() {
     List<ChatMessage> chatMessageList= [];
-    for (var element in messages) {
-      if (element == "") {
+    for (int i = 0; i < messages.length; i += 2) {
+      if (messages[i] == dummyMessage) {
         break;
       }
-      chatMessageList.add(ChatMessage.fromBorsh(Buffer.fromBase58(element).toList()));
+      chatMessageList.add(ChatMessage(message: _trimMessage(messages[i]), createdOn: messages[i+1]));
     }
     return chatMessageList;
+  }
+
+  String _trimMessage(String message){
+    return message.replaceAll(RegExp(r'^[0]{1,}'),'');
   }
 }

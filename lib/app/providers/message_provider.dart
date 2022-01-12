@@ -27,7 +27,7 @@ class MessageProvider extends ChangeNotifier{
   List<ChatMessage> _getDefaultChatMessages() {
     List<ChatMessage> chatMessages = [];
     for (int i = 0; i < chatMessageElementsCount; i++) {
-      chatMessages.add(ChatMessage());
+      chatMessages.add(ChatMessage(message: dummyMessage, createdOn: dummyCreatedOn));
     }
 
     return chatMessages;
@@ -38,7 +38,7 @@ class MessageProvider extends ChangeNotifier{
     String pubKeyStr
   ) async {
     //const sentPubkey = new PublicKey(pubKeyStr);
-    Account? sentAccount = await connection.rpcClient.getAccountInfo(pubKeyStr, encoding: Encoding.base64);
+    Account? sentAccount = await connection.rpcClient.getAccountInfo(pubKeyStr, encoding: Encoding.jsonParsed);
     // get and deserialize solana account data and receive txid
     // go to arweave and query using these txid
     // parse json and return ChatMessages

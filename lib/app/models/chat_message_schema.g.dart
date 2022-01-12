@@ -10,8 +10,8 @@ ChatMessageSchema _ChatMessageSchemaFromBorsh(List<int> _data) {
   ByteData _view = ByteData.sublistView(Uint8List.fromList(_data));
   int offset = 0;
 
-  final messages = _view.readFixedArray<String>(Borsh.string, 20, offset);
-  offset += messages.fold(0, (t, i) => t + i.length + 4);
+  final messages = _view.readDynamicArray<String>(Borsh.string, offset);
+  offset += 4 + messages.fold(0, (t, i) => t + i.length + 4);
 
   return ChatMessageSchema(
     messages: messages,
@@ -21,11 +21,11 @@ ChatMessageSchema _ChatMessageSchemaFromBorsh(List<int> _data) {
 List<int> _ChatMessageSchemaToBorsh(ChatMessageSchema s) {
   int size = 0;
   size += s.messages.fold(0, (t, i) => t + i.length + 4);
-  size += 0;
+  size += 4;
 
   final data = ByteData(size);
   int offset = 0;
-  offset += data.writeFixedArray<String>(Borsh.string, offset, s.messages);
+  offset += data.writeDynamicArray<String>(Borsh.string, offset, s.messages);
 
   return data.buffer.asUint8List();
 }

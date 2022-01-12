@@ -1,9 +1,11 @@
 
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:solana/solana.dart';
+import 'package:solana_chat/app/helpers/common.dart';
 import 'package:solana_chat/app/models/chat_message.dart';
 import 'package:solana_chat/app/models/chat_wrapper.dart';
 import 'package:solana_chat/app/models/messge_wrapper.dart';
@@ -38,23 +40,26 @@ class ChatListProvider extends ChangeNotifier {
 
   void addMessage(BuildContext context, MessageWrapper message/*, String foreingAddress*/){
     ChatWrapper chat = _chatMap.putIfAbsent(_selectedChat, () => ChatWrapper(_selectedChat));
-    chat.addMessages([message]);
-    chat.sentAmount++;
+    //chat.addMessages([message]);
+    //chat.sentAmount++;
+    showToast(context, "Sending Message...");
     sendMessage(context, message.message);
     notifyListeners();
   }
 
-  void sendMessage(BuildContext context, String message){
+  void sendMessage(BuildContext context, String message) async {
     WalletProvider walletProvider = Provider.of<WalletProvider>(context, listen: false);
 
     if (walletProvider.wallet != null && walletProvider.connection != null){
       Wallet wallet = walletProvider.wallet!;
       SolanaClient connection = walletProvider.connection!;
-      Provider.of<MessageProvider>(context, listen: false).sendMessage(
+      await Provider.of<MessageProvider>(context, listen: false).sendMessage(
           connection,
           wallet,
           _selectedChat,
           message);
+      showToast(context, "Message sent");
+      refreshMessages();
     }
   }
 
@@ -71,7 +76,7 @@ class ChatListProvider extends ChangeNotifier {
     return _chatMap[selectedChatPubK];
   }
 
-  void refreshMessages() async{
+  void refreshMessages() async {
     WalletProvider walletProvider = Provider.of<WalletProvider>(context, listen: false);
     MessageProvider messageProvider = Provider.of<MessageProvider>(context, listen: false);
 
@@ -81,17 +86,17 @@ class ChatListProvider extends ChangeNotifier {
 
     ChatWrapper chat = getChat(_selectedChat)!;
 
-    for (int i = chat.receivedAmount-1; i<receivedMessages.length; i++ ) {
-      newMessages.add(MessageWrapper(true, receivedMessages[i].message, createdOn: receivedMessages[i].createdOn as int));
+    for (int i = chat.receivedAmount; i<receivedMessages.length; i++ ) {
+      newMessages.add(MessageWrapper(false, receivedMessages[i].message, createdOn: int.parse(receivedMessages[i].createdOn)));
     }
-    for (int i = getChat(_selectedChat)!.sentAmount-1; i < sentMessages.length; i++ ) {
-      newMessages.add(MessageWrapper(true, sentMessages[i].message, createdOn: sentMessages[i].createdOn as int));
+    for (int i = chat.sentAmount; i < sentMessages.length; i++ ) {
+      newMessages.add(MessageWrapper(true, sentMessages[i].message, createdOn: int.parse(sentMessages[i].createdOn)));
     }
 
     chat.addMessages(newMessages);
     chat.sentAmount = sentMessages.length;
     chat.receivedAmount = receivedMessages.length;
-
+    notifyListeners();
   }
 
 

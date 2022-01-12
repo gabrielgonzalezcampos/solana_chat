@@ -14,7 +14,7 @@ class WalletProvider extends ChangeNotifier{
 
   bool _random = false;
   final programID = addMessageProgramID;
-  List<int> _seed = seed1;
+  List<int> _seed = seed2;
   String account = "";
 
   get random => _random;

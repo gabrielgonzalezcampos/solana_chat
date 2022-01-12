@@ -37,7 +37,7 @@ class MessageListState extends State<MessageList> {
             if (chat == null) {
               chatListProvider.setSelectedChat("");
             } else {
-              if (child != null && _prevLength != chat.messages.length){
+              if (child != null && _prevLength == chat.messages.length){
                 return child;
               }
               return _buildList(chat.messages);
@@ -50,13 +50,14 @@ class MessageListState extends State<MessageList> {
   }
 
   ListView _buildList( List<MessageWrapper> messages){
-    _prevLength = messages.length;
-    return ListView.builder(
+    ListView listView = ListView.builder(
         itemCount: messages.length,
         itemBuilder: (context, i) {
           return _buildRow(messages[i]);
         }
     );
+    _prevLength = messages.length;
+    return listView;
   }
 
   Widget _buildRow(MessageWrapper message) {
